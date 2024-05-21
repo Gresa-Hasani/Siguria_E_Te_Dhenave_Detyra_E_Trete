@@ -57,6 +57,28 @@ private static void handleClient(Socket clientSocket) throws Exception {
 
     String hmac = CryptoUtils.generateHMAC(message, sharedSecret);
     out.println(hmac);
+// Hapi 6: Pranoje konfirmimin nga klienti
+        String confirmation = in.readLine();
+        if ("Handshake Successful".equals(confirmation)) {
+            System.out.println("Handshake successful. Proceeding to establish secure channel...");
 
+            // Fillo komunikimin
+            String clientMessage;
+            while ((clientMessage = in.readLine()) != null) {
+                // Dekripto mesazhin e klientit
+                String decryptedClientMessage = CryptoUtils.decrypt(clientMessage, Arrays.copyOf(sharedSecret, 16));
+                System.out.println("Client: " + decryptedClientMessage);
+
+                System.out.print("");
+                String response = consoleIn.readLine();
+
+                // Enkripto pergjigjen e serverit
+                String encryptedResponse = CryptoUtils.encrypt(response, Arrays.copyOf(sharedSecret, 16));
+                out.println(encryptedResponse);
+            }
+        } else {
+            System.out.println("Handshake failed.");
+        }
+    }
 
 }
