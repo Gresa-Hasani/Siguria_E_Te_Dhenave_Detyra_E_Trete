@@ -50,4 +50,30 @@ public class Client {
                 System.out.println("HMAC verification failed. Exiting...");
                 return;
             }
+            
+            out.println("Handshake Successful");
+            System.out.println("Handshake successful. Secure channel established. You can now begin your session.");
+
+            
+            String userInput;
+            while ((userInput = consoleIn.readLine()) != null) {
+                
+
+               
+                String encryptedUserInput = CryptoUtils.encrypt(userInput, Arrays.copyOf(sharedSecret, 16));
+                out.println(encryptedUserInput);
+
+                if ("exit".equalsIgnoreCase(userInput)) {
+                    break;
+                }
+
+                String encryptedServerResponse = in.readLine();
+
+               
+                String decryptedServerResponse = CryptoUtils.decrypt(encryptedServerResponse, Arrays.copyOf(sharedSecret, 16));
+                System.out.println("Server: " + decryptedServerResponse);
+            }
+        }
+    }
+}
 
