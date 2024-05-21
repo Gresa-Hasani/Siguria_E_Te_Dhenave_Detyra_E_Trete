@@ -44,9 +44,19 @@ private static void handleClient(Socket clientSocket) throws Exception {
 
     out.println(Base64.getEncoder().encodeToString(serverKeyPair.getPublic().getEncoded()));
 
-   
+
     String clientPubKeyStr = in.readLine();
     clientPublicKey = CryptoUtils.getPublicKeyFromString(clientPubKeyStr);
 
-   
+
+    byte[] sharedSecret = CryptoUtils.generateSharedSecret(serverKeyPair.getPrivate(), clientPublicKey);
+
+    String message = "Server Authentication";
+    String signature = CryptoUtils.signData(serverKeyPair.getPrivate(), message);
+    out.println(signature);
+
+    String hmac = CryptoUtils.generateHMAC(message, sharedSecret);
+    out.println(hmac);
+
+
 }
